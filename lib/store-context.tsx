@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, {
   createContext,
@@ -7,8 +7,8 @@ import React, {
   useEffect,
   useState,
   useCallback,
-} from 'react';
-import type { Product } from '@/lib/products';
+} from "react";
+import type { Product } from "@/lib/products";
 
 export interface CartItem {
   product: Product;
@@ -22,7 +22,7 @@ export interface Order {
   date: string;
   items: CartItem[];
   total: number;
-  status: 'Processing' | 'Shipped' | 'Delivered';
+  status: "Processing" | "Shipped" | "Delivered";
 }
 
 export interface Address {
@@ -40,7 +40,7 @@ export interface Address {
 
 export interface PaymentMethod {
   id: string;
-  type: 'Card' | 'UPI';
+  type: "Card" | "UPI";
   last4: string;
   name: string;
   expiry?: string;
@@ -60,146 +60,146 @@ interface StoreState {
 }
 
 type StoreAction =
-  | { type: 'ADD_TO_CART'; item: CartItem }
-  | { type: 'REMOVE_FROM_CART'; index: number }
-  | { type: 'UPDATE_QTY'; index: number; quantity: number }
-  | { type: 'CLEAR_CART' }
-  | { type: 'TOGGLE_WISHLIST'; productId: string }
-  | { type: 'PLACE_ORDER'; order: Order }
-  | { type: 'ADD_ADDRESS'; address: Address }
-  | { type: 'UPDATE_ADDRESS'; address: Address }
-  | { type: 'DELETE_ADDRESS'; id: string }
-  | { type: 'ADD_PAYMENT'; payment: PaymentMethod }
-  | { type: 'DELETE_PAYMENT'; id: string }
-  | { type: 'UPDATE_PROFILE'; profile: Partial<StoreState['profile']> }
-  | { type: 'HYDRATE'; state: StoreState };
+  | { type: "ADD_TO_CART"; item: CartItem }
+  | { type: "REMOVE_FROM_CART"; index: number }
+  | { type: "UPDATE_QTY"; index: number; quantity: number }
+  | { type: "CLEAR_CART" }
+  | { type: "TOGGLE_WISHLIST"; productId: string }
+  | { type: "PLACE_ORDER"; order: Order }
+  | { type: "ADD_ADDRESS"; address: Address }
+  | { type: "UPDATE_ADDRESS"; address: Address }
+  | { type: "DELETE_ADDRESS"; id: string }
+  | { type: "ADD_PAYMENT"; payment: PaymentMethod }
+  | { type: "DELETE_PAYMENT"; id: string }
+  | { type: "UPDATE_PROFILE"; profile: Partial<StoreState["profile"]> }
+  | { type: "HYDRATE"; state: StoreState };
 
-const STORAGE_KEY = 'mfashions-store';
+const STORAGE_KEY = "mfashions-store";
 
 const initialState: StoreState = {
   cart: [],
   wishlist: [],
   orders: [
     {
-      id: 'ORD-2024-0892',
-      date: '2024-08-15',
+      id: "ORD-2024-0892",
+      date: "2024-08-15",
       items: [
         {
           product: {
-            id: 'p6',
-            name: 'Leather Biker Jacket',
-            category: 'Jackets',
+            id: "p6",
+            name: "Leather Biker Jacket",
+            category: "Jackets",
             price: 7999,
             rating: 4.9,
             reviews: 76,
             image:
-              'https://images.pexels.com/photos/18326063/pexels-photo-18326063.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
+              "https://images.pexels.com/photos/18326063/pexels-photo-18326063.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
             images: [],
             colors: [],
             sizes: [],
-            description: '',
+            description: "",
           },
-          size: 'L',
-          color: 'Black',
+          size: "L",
+          color: "Black",
           quantity: 1,
         },
       ],
       total: 7999,
-      status: 'Delivered',
+      status: "Delivered",
     },
     {
-      id: 'ORD-2024-0915',
-      date: '2024-09-02',
+      id: "ORD-2024-0915",
+      date: "2024-09-02",
       items: [
         {
           product: {
-            id: 'p2',
-            name: 'Urban Hoodie — Olive',
-            category: 'Hoodies',
+            id: "p2",
+            name: "Urban Hoodie — Olive",
+            category: "Hoodies",
             price: 2499,
             rating: 4.8,
             reviews: 156,
             image:
-              'https://images.pexels.com/photos/18078030/pexels-photo-18078030.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
+              "https://images.pexels.com/photos/18078030/pexels-photo-18078030.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
             images: [],
             colors: [],
             sizes: [],
-            description: '',
+            description: "",
           },
-          size: 'M',
-          color: 'Olive',
+          size: "M",
+          color: "Olive",
           quantity: 2,
         },
       ],
       total: 4998,
-      status: 'Shipped',
+      status: "Shipped",
     },
     {
-      id: 'ORD-2024-0934',
-      date: '2024-09-10',
+      id: "ORD-2024-0934",
+      date: "2024-09-10",
       items: [
         {
           product: {
-            id: 'p7',
-            name: 'Oversized Drop-Shoulder Tee',
-            category: 'Oversized Tees',
+            id: "p7",
+            name: "Oversized Drop-Shoulder Tee",
+            category: "Oversized Tees",
             price: 1599,
             rating: 4.6,
             reviews: 167,
             image:
-              'https://images.pexels.com/photos/32490938/pexels-photo-32490938.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
+              "https://images.pexels.com/photos/32490938/pexels-photo-32490938.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
             images: [],
             colors: [],
             sizes: [],
-            description: '',
+            description: "",
           },
-          size: 'L',
-          color: 'Cream',
+          size: "L",
+          color: "Cream",
           quantity: 1,
         },
       ],
       total: 1599,
-      status: 'Processing',
+      status: "Processing",
     },
   ],
   addresses: [
     {
-      id: 'addr-1',
-      label: 'Home',
-      name: 'Arjun Sharma',
-      phone: '+91 98765 43210',
-      line1: '42, MG Road, Indiranagar',
-      line2: '2nd Floor, Above Cafe',
-      city: 'Bengaluru',
-      state: 'Karnataka',
-      pincode: '560038',
+      id: "addr-1",
+      label: "Home",
+      name: "Musammil Mussu",
+      phone: "+91 98765 43210",
+      line1: "42, MG Road, Indiranagar",
+      line2: "2nd Floor, Above Cafe",
+      city: "Bengaluru",
+      state: "Karnataka",
+      pincode: "560038",
       isDefault: true,
     },
   ],
   paymentMethods: [
     {
-      id: 'pm-1',
-      type: 'Card',
-      last4: '4242',
-      name: 'Arjun Sharma',
-      expiry: '08/27',
+      id: "pm-1",
+      type: "Card",
+      last4: "4242",
+      name: "Musammil Mussu",
+      expiry: "08/27",
     },
   ],
   profile: {
-    name: 'Arjun Sharma',
-    email: 'arjun.sharma@example.com',
-    phone: '+91 98765 43210',
+    name: "Musammil Mussu",
+    email: "Musammil.Mussu@example.com",
+    phone: "+91 98765 43210",
   },
 };
 
 function reducer(state: StoreState, action: StoreAction): StoreState {
   switch (action.type) {
-    case 'ADD_TO_CART': {
+    case "ADD_TO_CART": {
       const existing = state.cart.findIndex(
         (c) =>
           c.product.id === action.item.product.id &&
           c.size === action.item.size &&
-          c.color === action.item.color
+          c.color === action.item.color,
       );
       if (existing >= 0) {
         const cart = [...state.cart];
@@ -211,58 +211,58 @@ function reducer(state: StoreState, action: StoreAction): StoreState {
       }
       return { ...state, cart: [...state.cart, action.item] };
     }
-    case 'REMOVE_FROM_CART':
+    case "REMOVE_FROM_CART":
       return {
         ...state,
         cart: state.cart.filter((_, i) => i !== action.index),
       };
-    case 'UPDATE_QTY':
+    case "UPDATE_QTY":
       return {
         ...state,
         cart: state.cart.map((item, i) =>
           i === action.index
             ? { ...item, quantity: Math.max(1, action.quantity) }
-            : item
+            : item,
         ),
       };
-    case 'CLEAR_CART':
+    case "CLEAR_CART":
       return { ...state, cart: [] };
-    case 'TOGGLE_WISHLIST':
+    case "TOGGLE_WISHLIST":
       return {
         ...state,
         wishlist: state.wishlist.includes(action.productId)
           ? state.wishlist.filter((id) => id !== action.productId)
           : [...state.wishlist, action.productId],
       };
-    case 'PLACE_ORDER':
+    case "PLACE_ORDER":
       return { ...state, orders: [action.order, ...state.orders], cart: [] };
-    case 'ADD_ADDRESS':
+    case "ADD_ADDRESS":
       return { ...state, addresses: [...state.addresses, action.address] };
-    case 'UPDATE_ADDRESS':
+    case "UPDATE_ADDRESS":
       return {
         ...state,
         addresses: state.addresses.map((a) =>
-          a.id === action.address.id ? action.address : a
+          a.id === action.address.id ? action.address : a,
         ),
       };
-    case 'DELETE_ADDRESS':
+    case "DELETE_ADDRESS":
       return {
         ...state,
         addresses: state.addresses.filter((a) => a.id !== action.id),
       };
-    case 'ADD_PAYMENT':
+    case "ADD_PAYMENT":
       return {
         ...state,
         paymentMethods: [...state.paymentMethods, action.payment],
       };
-    case 'DELETE_PAYMENT':
+    case "DELETE_PAYMENT":
       return {
         ...state,
         paymentMethods: state.paymentMethods.filter((p) => p.id !== action.id),
       };
-    case 'UPDATE_PROFILE':
+    case "UPDATE_PROFILE":
       return { ...state, profile: { ...state.profile, ...action.profile } };
-    case 'HYDRATE':
+    case "HYDRATE":
       return action.state;
     default:
       return state;
@@ -270,14 +270,19 @@ function reducer(state: StoreState, action: StoreAction): StoreState {
 }
 
 interface StoreContextValue extends StoreState {
-  addToCart: (product: Product, size: string, color: string, qty?: number) => void;
+  addToCart: (
+    product: Product,
+    size: string,
+    color: string,
+    qty?: number,
+  ) => void;
   removeFromCart: (index: number) => void;
   updateQty: (index: number, qty: number) => void;
   clearCart: () => void;
   toggleWishlist: (productId: string) => void;
   isInWishlist: (productId: string) => boolean;
   placeOrder: () => void;
-  updateProfile: (profile: Partial<StoreState['profile']>) => void;
+  updateProfile: (profile: Partial<StoreState["profile"]>) => void;
   addAddress: (address: Address) => void;
   updateAddress: (address: Address) => void;
   deleteAddress: (id: string) => void;
@@ -301,7 +306,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
         const parsed = JSON.parse(stored);
-        dispatch({ type: 'HYDRATE', state: { ...initialState, ...parsed } });
+        dispatch({ type: "HYDRATE", state: { ...initialState, ...parsed } });
       }
     } catch {
       // ignore
@@ -318,82 +323,82 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const addToCart = useCallback(
     (product: Product, size: string, color: string, qty = 1) => {
       dispatch({
-        type: 'ADD_TO_CART',
+        type: "ADD_TO_CART",
         item: { product, size, color, quantity: qty },
       });
       setCartOpen(true);
     },
-    []
+    [],
   );
 
   const removeFromCart = useCallback((index: number) => {
-    dispatch({ type: 'REMOVE_FROM_CART', index });
+    dispatch({ type: "REMOVE_FROM_CART", index });
   }, []);
 
   const updateQty = useCallback((index: number, qty: number) => {
-    dispatch({ type: 'UPDATE_QTY', index, quantity: qty });
+    dispatch({ type: "UPDATE_QTY", index, quantity: qty });
   }, []);
 
-  const clearCart = useCallback(() => dispatch({ type: 'CLEAR_CART' }), []);
+  const clearCart = useCallback(() => dispatch({ type: "CLEAR_CART" }), []);
 
   const toggleWishlist = useCallback((productId: string) => {
-    dispatch({ type: 'TOGGLE_WISHLIST', productId });
+    dispatch({ type: "TOGGLE_WISHLIST", productId });
   }, []);
 
   const isInWishlist = useCallback(
     (productId: string) => state.wishlist.includes(productId),
-    [state.wishlist]
+    [state.wishlist],
   );
 
   const placeOrder = useCallback(() => {
     if (state.cart.length === 0) return;
     const total = state.cart.reduce(
       (sum, item) => sum + item.product.price * item.quantity,
-      0
+      0,
     );
     const order: Order = {
       id: `ORD-${new Date().getFullYear()}-${Math.floor(
-        1000 + Math.random() * 9000
+        1000 + Math.random() * 9000,
       )}`,
-      date: new Date().toISOString().split('T')[0],
+      date: new Date().toISOString().split("T")[0],
       items: [...state.cart],
       total,
-      status: 'Processing',
+      status: "Processing",
     };
-    dispatch({ type: 'PLACE_ORDER', order });
+    dispatch({ type: "PLACE_ORDER", order });
   }, [state.cart]);
 
   const updateProfile = useCallback(
-    (profile: Partial<StoreState['profile']>) => {
-      dispatch({ type: 'UPDATE_PROFILE', profile });
+    (profile: Partial<StoreState["profile"]>) => {
+      dispatch({ type: "UPDATE_PROFILE", profile });
     },
-    []
+    [],
   );
 
   const addAddress = useCallback((address: Address) => {
-    dispatch({ type: 'ADD_ADDRESS', address });
+    dispatch({ type: "ADD_ADDRESS", address });
   }, []);
 
   const updateAddress = useCallback((address: Address) => {
-    dispatch({ type: 'UPDATE_ADDRESS', address });
+    dispatch({ type: "UPDATE_ADDRESS", address });
   }, []);
 
   const deleteAddress = useCallback((id: string) => {
-    dispatch({ type: 'DELETE_ADDRESS', id });
+    dispatch({ type: "DELETE_ADDRESS", id });
   }, []);
 
   const addPayment = useCallback((payment: PaymentMethod) => {
-    dispatch({ type: 'ADD_PAYMENT', payment });
+    dispatch({ type: "ADD_PAYMENT", payment });
   }, []);
 
   const deletePayment = useCallback((id: string) => {
-    dispatch({ type: 'DELETE_PAYMENT', id });
+    dispatch({ type: "DELETE_PAYMENT", id });
   }, []);
 
   const cartCount = state.cart.reduce((sum, item) => sum + item.quantity, 0);
   const cartTotal = state.cart.reduce(
     (sum, item) => sum + item.product.price * item.quantity,
-    0
+    0,
   );
 
   const value: StoreContextValue = {
@@ -424,6 +429,6 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
 
 export function useStore() {
   const ctx = useContext(StoreContext);
-  if (!ctx) throw new Error('useStore must be used within StoreProvider');
+  if (!ctx) throw new Error("useStore must be used within StoreProvider");
   return ctx;
 }
